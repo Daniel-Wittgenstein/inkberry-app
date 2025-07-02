@@ -41,6 +41,7 @@
   "scripts": {
     "build": "electron-builder --win --x64 --publish=never",
     "build-linux": "npx electron-builder --linux --x64 --publish=never",
+    "build-mac": "electron-builder --mac --${ELECTRON_BUILDER_ARCH} --publish=never",
     "postinstall": "electron-builder install-app-deps",
     "release": "electron-builder --mac --windows --linux --publish always",
     "test": "echo \"Error: no test specified\" && exit 1",
