@@ -83,8 +83,8 @@ function updateEntryFileName() {
 
 async function startApp() {
 
-  document.getElementById('warning').addEventListener("click", () => {
-    document.getElementById('warning').style.display = "none";
+  document.getElementById('button-close-warning').addEventListener("click", () => {
+    hideWarning();
   });
 
   document.body.addEventListener("keydown", (event) => {
