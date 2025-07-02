@@ -1,0 +1,55 @@
+{
+  "name": "inkberry",
+  "version": "0.0.11",
+  "description": "-",
+  "main": "core/main.js",
+  "build": {
+    "appId": "com.inkberry.inkberry",
+    "productName": "inkberry",
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "target": "dmg"
+    },
+    "dmg": {},
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Development"
+    }
+  },
+  "scripts": {
+    "build": "electron-builder --win --x64 --publish=never",
+    "build-linux": "npx electron-builder --linux --x64 --publish=never",
+    "postinstall": "electron-builder install-app-deps",
+    "release": "electron-builder --mac --windows --linux --publish always",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "nodemon --exec electron . --ignore usersettings/*",
+    "format": "prettier --write .",
+    "build-docs": "pandoc --standalone --toc --number-sections --template ./docs/template.html ./docs/index.md -o ./docs/index.html"
+  },
+  "author": "me",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "electron": "28.1.4",
+    "electron-builder": "^25.1.8",
+    "prettier": "^3.5.1"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16",
+    "chokidar": "^3.6.0",
+    "express": "^4.21.2",
+    "inkjs": "2.3.1",
+    "ncp": "^2.0.0"
+  }
+}

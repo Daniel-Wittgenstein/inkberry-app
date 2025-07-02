@@ -1,0 +1,8 @@
+{
+  "id": "Poink",
+  "name": "Poink-and-Clink: A point & click framework for Ink",
+  "version": "0.1.0",
+  "author": "Avery Hiebert",
+  "license": "MIT",
+  "descr": "Poink-and-Clink (\"Poink\" for short) is a drop-in replacement for the default web export template in Inky, adding support for simple point & click game functionality. Perfect for simple 2D point & click games, especially if you're doing the art in Aseprite (there's an export script!)"
+}

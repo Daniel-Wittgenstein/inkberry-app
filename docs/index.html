@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Documentation</title>
+  <link rel="stylesheet" href="docs-style.css">
+</head>
+<body>
+  <div id="all">
+    <div id="toc">
+      <h1>Table of Contents</h1>
+      <ul>
+      <li><a href="#what-is-inkberry"><span class="toc-section-number">1</span> What is Inkberry?</a></li>
+      <li><a href="#using-inkberry-with-inky-recommended-setup"><span class="toc-section-number">2</span> Using Inkberry with Inky (Recommended Setup)</a></li>
+      <li><a href="#importing-an-existing-ink-project-that-was-not-created-with-inkberry"><span class="toc-section-number">3</span> Importing an Existing Ink Project that was not Created With Inkberry</a></li>
+      <li><a href="#publishing-your-story"><span class="toc-section-number">4</span> Publishing Your Story</a></li>
+      <li><a href="#debugging"><span class="toc-section-number">5</span> Debugging</a></li>
+      <li><a href="#slightly-advanced-changing-the-defaults-of-an-inkberry-project"><span class="toc-section-number">6</span> Slightly Advanced: Changing the Defaults of an Inkberry Project</a></li>
+      <li><a href="#more-advanced-creating-your-own-templates"><span class="toc-section-number">7</span> More Advanced: Creating your Own Templates</a></li>
+      <li><a href="#distributing-your-story-template"><span class="toc-section-number">8</span> Distributing your Story Template</a></li>
+      <li><a href="#known-issues-so-far"><span class="toc-section-number">9</span> Known issues so far</a></li>
+      </ul>
+    </div>
+    <h1 data-number="1" id="what-is-inkberry"><span class="header-section-number">1</span> What is Inkberry?</h1>
+    <p><strong>Inkberry</strong> is a free and open-source tool. Its aim is to make the creation of web games with <a href="https://www.inklestudios.com/ink/">InkleStudio’s Ink/Inky</a> a bit easier.</p>
+    <p>While Inky is a great tool for game creation, it lacks a live browser preview. That’s where inkberry comes in! Inkberry automatically recompiles your story when it changes and displays the result in a window that is pretty much like a browser. This allows you to quickly test how your game behaves.</p>
+    <p>Inkberry is not a replacement for <strong>Inky</strong>, but rather a companion to it. In fact, you are supposed to use both in tandem. :)</p>
+    <p>(Alternatively, instead of using Inky, you can also use VS code with the Ink integration or any other text editor, but Inky is the recommended choice for beginners.)</p>
+    <h1 data-number="2" id="using-inkberry-with-inky-recommended-setup"><span class="header-section-number">2</span> Using Inkberry with Inky (Recommended Setup)</h1>
+    <ul>
+    <li><p>First, if you haven’t done this yet, you should download the free <a href="https://www.inklestudios.com/ink/">Inky</a> and familiarize yourself with it. It’s a great editor that allows you to create choice-based text games.</p></li>
+    <li><p>Once you are done with that, download inkberry, unzip it and run it, even though your operating system tells you that it’s a risk. (It’s not really a huge risk, but I assume zero responsibility for any data losses or other problems arising from the usage of inkberry. See the license. Make sure to make regular backups.)</p></li>
+    <li><p>Click on the big “Create a New Project” button.</p></li>
+    <li><p>Choose a directory and a name for your project. The name is mostly for you. It will be shown in inkberry’s “Recent Projects” view, so choose a name that makes sense to you. The name will not be shown in the final game.</p></li>
+    <li><p>Choose a template.</p></li>
+    <li><p>A window with some text should open. This is the preview of your game.</p></li>
+    <li><p>Click on “Project” -&gt; “Open in File Manager” to open the newly created directory. You should see all kinds of files inside it. What you want to do now, is go into <strong>Inky</strong> and open the file “story.ink”.</p></li>
+    <li><p>Change some text and save. You should see your changes reflected in the inkberry preview window!</p></li>
+    </ul>
+    <h1 data-number="3" id="importing-an-existing-ink-project-that-was-not-created-with-inkberry"><span class="header-section-number">3</span> Importing an Existing Ink Project that was not Created With Inkberry</h1>
+    <p>If you have already exported a project with Inky’s standard web template in the past and you want to use it with inkberry now, open up inkberry, click on the “Convert an Existing Project to Inkberry” button and follow the steps.</p>
+    <h1 data-number="4" id="publishing-your-story"><span class="header-section-number">4</span> Publishing Your Story</h1>
+    <p>(STEP 1:) This first step is optional. Only do this if you don’t want players to have access to your ink source code:</p>
+    <ul>
+    <li><p>Make a copy of the project folder.</p></li>
+    <li><p>Delete all ink files.</p></li>
+    <li><p>Delete “auto-ink-sources.js”</p></li>
+    </ul>
+    <p>STEP 2: Zip up the entire contents of your folder.</p>
+    <p>STEP 3: Upload the zip file to Itch.io or wherever.</p>
+    <h1 data-number="5" id="debugging"><span class="header-section-number">5</span> Debugging</h1>
+    <p>CTRL + Shift + i opens the developer tools, pretty much like in a browser.</p>
+    <h1 data-number="6" id="slightly-advanced-changing-the-defaults-of-an-inkberry-project"><span class="header-section-number">6</span> Slightly Advanced: Changing the Defaults of an Inkberry Project</h1>
+    <p>When you create a new inkberry project, inkberry chooses default file names for you. For example, a file named “story.ink” is created. This is the main file of your ink project. (The file that includes other ink files via “INCLUDE”).</p>
+    <p>If you are really unhappy with that, you can open the file “ink-package.json” in your project directory. It will look more or less like this:</p>
+    <p>{</p>
+    <p>“projectName”: “My Fancy Game”,</p>
+    <p>“entryFile”: “story.js”,</p>
+    <p>“inkFile”: “story.ink”</p>
+    <p>}</p>
+    <ul>
+    <li><p>“inkfile” is where the name of the main ink file is defined. You may change this.</p></li>
+    <li><p>“entryfile” is where the js file with the finished, compiled story is defined. You can change it. (But of course then you might have to change your index.html, too, so that it correctly includes the JavaScript file, etc.)</p></li>
+    <li><p>“projectName” defines your project’s name <strong>for inkberry</strong>. So that’s the project name you will see under “Recent Projects”. You can change this as well.</p></li>
+    </ul>
+    <p>In fact the only difference between a normal directory and a directory that is an inkberry project is the existence of an “ink-package.json” file. If you add an “ink-package.json” file with some JSON in it to a directory it becomes a valid inkberry project.</p>
+    <h1 data-number="7" id="more-advanced-creating-your-own-templates"><span class="header-section-number">7</span> More Advanced: Creating your Own Templates</h1>
+    <p>You can even create your own templates. Here’s how:</p>
+    <p>inkberry will look for user defined templates in a special <strong>user templates directory</strong>. The location depends on your OS. Click “About” -&gt; “About” to find the location.</p>
+    <p>First, you should create that directory, if it does not exist, yet.</p>
+    <p>Then, inside that directory, create a sub-directory. Let’s call it “yet-another-template”. This is where your template files will go.</p>
+    <p>Next, put an “index.html” file into the directory “yet-another-template”. It should contain this (or similar): <strong>&lt;script src=“story.js”&gt;&lt;/script&gt;</strong> to load the compiled story and this: <strong>&lt;script src=“ink.js”&gt;&lt;/script&gt;</strong> to load the ink runtime. The result of the compiled ink story will end up in the global variable “storyContent”.</p>
+    <p>Add any JS files you want to the directory. You should use the contents of “window.storyContent” to run your ink story. You can also add CSS files to the directory and any other files. They will all be copied over when a new story is created with your template.</p>
+    <p>Finally, add a file called “template-package.json” to your directory:</p>
+    <p>{</p>
+    <p>“id”: “yet-another-template”,</p>
+    <p>“name”: “Yet Another Template for Ink Web Games”,</p>
+    <p>“version”: “0.0.1”,</p>
+    <p>“author”: “Guy Incognito”,</p>
+    <p>“license”: “MIT”,</p>
+    <p>“descr”: “This is a template I created. Enjoy!”</p>
+    <p>}</p>
+    <p>Reload inkberry and choose “create a new project”. The template should show up.</p>
+    <p><em>Optional:</em> inkberry automatically creates a file called “auto-ink-sources.js” in your project folder. Your template can optionally load that file. It defines a global variable "$_inkSources" that contains the entire content of all the project’s ink files. The template can use this to perform checks. For example, you could search the ink file contents for misspelled special tags and warn the story author.</p>
+    <p><strong>Note:</strong> Never use a template if you don’t trust the template authors. Opening an untrusted HTML file in inkberry is MORE dangerous than opening it in your browser.</p>
+    <h1 data-number="8" id="distributing-your-story-template"><span class="header-section-number">8</span> Distributing your Story Template</h1>
+    <ul>
+    <li><p>Put all files for your template into a zip file.</p></li>
+    <li><p>Distribute the zip file.</p></li>
+    <li><p>Users can create a new directory for the template manually or they can just use the option “Load a Story Template”. The “Load a Story Template” option is just a shortcut: it automatically extracts the zip file and copies all the template files into the right location.</p></li>
+    </ul>
+    <h1 data-number="9" id="known-issues-so-far"><span class="header-section-number">9</span> Known issues so far</h1>
+    <p><i>My story has light background inside inkberry, but dark background inside my browser!</i></p>
+    <p>Maybe the template you are using respects user preferences and you set “dark mode” as a preference in your browser or OS.</p>
+  </div>
+</body>
+</html>

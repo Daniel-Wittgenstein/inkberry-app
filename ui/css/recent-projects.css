@@ -1,0 +1,14 @@
+.recent-projects-item {
+  padding: 8px;
+  border: 1px solid rgba(100, 100, 120);
+  border-radius: 4px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between; /* This will place the first item to the left and the second to the right */
+  align-items: center; /* Optional: vertically align items if they have different heights */
+}
+
+.recent-projects-info {
+  margin-left: 12px;
+  font-size: 12px;
+}

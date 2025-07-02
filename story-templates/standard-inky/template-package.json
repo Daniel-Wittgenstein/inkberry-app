@@ -1,0 +1,9 @@
+{
+  "id": "standard-inky",
+  "name": "Standard Inky Template",
+  "version": "unknown",
+  "author": "Inky Team",
+  "license": "MIT",
+  "descr": "This is the standard web template that is created when you use Inky's web export.",
+  "useSources": true
+}

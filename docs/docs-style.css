@@ -1,0 +1,56 @@
+body {
+  font-family: system-ui, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, Helvetica, Arial, "Helvetica Neue", sans-serif;
+  font-size: 16px;
+  margin: 0px;
+  padding: 0px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background: white;
+  color: black;
+  line-height: 26px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #333; 
+}
+
+h1, h2, h3 {
+  border-top: 1px solid #444;
+  margin-top: 64px;
+}
+
+#all {
+  max-width: 720px;
+  padding: 32px;
+}
+
+a {
+  color: #246c96;
+  line-height: 28px;
+}
+  
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #222;
+    color: white;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: white; 
+  }
+  
+  a {
+    color: white;
+  }  
+}
+
+li::marker {
+  color: #289797;
+  content: "✺  ";
+  padding-inline-start: 12px;
+}
+
+#toc > ul li::marker {
+  content: "";
+}

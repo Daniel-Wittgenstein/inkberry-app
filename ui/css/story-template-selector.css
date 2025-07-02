@@ -1,0 +1,48 @@
+#story-template-selector {
+  display: flex;
+  flex-direction: row;
+}
+
+#sts-left {
+  width: 40%;
+  line-height: 20px;
+}
+
+#sts-right {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 6px;
+  border: 1px solid rgb(223, 223, 223);
+  padding: 16px;
+  background: #f5f5f5;
+}
+
+.story-template-name {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.st-title {
+  font-weight: bold;
+}
+
+.st-author {
+  font-style: italic;
+}
+
+.st-version {
+  font-size: 14px;
+}
+
+.st-license {
+  font-size: 14px;
+}
+
+.st-type {
+  font-size: 14px;
+}
+
+.st-descr {
+  font-weight: bold;
+}

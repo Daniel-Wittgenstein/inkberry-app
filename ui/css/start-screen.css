@@ -1,0 +1,21 @@
+#start-screen-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto;
+  grid-template-areas:
+    "start-screen-left start-screen-right"
+    "start-screen-below start-screen-below";
+}
+
+#start-screen-left {
+  grid-area: start-screen-left;
+}
+
+#start-screen-right {
+  grid-area: start-screen-right;
+  text-align: right;
+}
+
+#start-screen-below {
+  grid-area: start-screen-below;
+}

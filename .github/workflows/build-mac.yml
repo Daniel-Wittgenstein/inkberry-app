@@ -1,0 +1,37 @@
+name: Build Electron App (macOS)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    strategy:
+      matrix:
+        arch: [x64, arm64]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Electron App for ${{ matrix.arch }}
+        run: npm run build
+        env:
+          ELECTRON_BUILDER_ARCH: ${{ matrix.arch }}
+
+      - name: Upload build artifacts (${{ matrix.arch }})
+        uses: actions/upload-artifact@v4
+        with:
+          name: electron-app-${{ matrix.arch }}
+          path: ./dist/

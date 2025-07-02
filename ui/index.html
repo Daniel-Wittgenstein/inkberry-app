@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+    <title>inkberry</title>
+
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <link rel="stylesheet" type="text/css" href="css/buttons.css" />
+    <link rel="stylesheet" type="text/css" href="css/start-screen.css" />
+    <link rel="stylesheet" type="text/css" href="css/recent-projects.css" />
+    <link rel="stylesheet" type="text/css" href="css/story-template-selector.css" />
+  </head>
+  <body>
+    <div id="opening-project-overlay"></div>
+
+    <div id="app">
+      <div class="screen" id="start-screen">
+        <div id="start-screen-inner">
+
+          <div id="start-screen-left">
+
+             <div id="warning">
+              <p>IMPORTANT!</p>
+
+              <p>Do not use story templates if you do not trust the template author!
+                (Opening an HTML file in inkberry is LESS secure than opening it in your browser,
+                so malicious story templates could do all kinds of bad things.)</p>
+
+              <p>The authors of this software assume zero responsibility for any kind of damage arising
+                from the use of the software.
+              </p>
+
+              <p>THIS SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+                BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
+                NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
+                DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+                FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+
+              <button id="button-close-warning">Got it!</button>
+              
+             </div>
+
+            <button id="button-new-project">Create a New Inkberry Project</button><br /><br />
+
+            <button id="button-open-project">Open an Inkberry Project</button><br /><br />
+
+            <button id="button-convert-project">Convert an Existing Project to Inkberry</button>
+          </div>
+
+          <div id="start-screen-right">
+            <button id="button-load-story-template">Load a Story Template</button><br /><br />
+          </div>
+
+          <div id="start-screen-below">
+            <div id="recent-projects-box"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen" id="load-story-template">
+        <h1>Load a Story Template</h1>
+        <p>Select a zip file containing the story template.</p>
+        <p id="story-template-load-result"></p>
+        <button id="button-load-story-template-select">Select</button>
+        <button id="button-load-story-template-abort" class="cancel">Back</button>
+      </div>
+
+      <div class="screen" id="new-project-screen">
+        <h1>Create a New Project</h1>
+
+        <div class="box">
+          Project name:&nbsp;<input
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            type="text"
+            value=""
+            id="new-project-name"
+          />
+        </div>
+
+        <div class="box">
+          The project will be created in:
+          <b><span id="new-project-selected-dir-label"> </span></b>
+
+          <p>
+            Select another directory for your project:
+            <button id="button-new-project-select-dir">Select</button>
+          </p>
+        </div>
+
+        <div id="story-template-selector"></div>
+
+        <div>
+          <button id="button-new-project-done" class="confirm">Create this Project!</button>
+          <button id="button-new-project-abort" class="cancel">Cancel</button>
+        </div>
+      </div>
+
+      <div class="screen" id="convert-project-screen">
+        <h1>Convert an Existing Project to Inkberry</h1>
+
+        <p>
+          If you have already exported a project with the standard Inky template in the past and you
+          want to use it with inkberry now, this is the right option for you.
+        </p>
+        <div class="box">
+          Give the Project a Name:&nbsp;<input
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            type="text"
+            value=""
+            id="convert-project-name"
+          />
+        </div>
+
+        <div class="box">
+          <p>Select the directory of the project you want to convert:</p>
+          <p id="convert-project-selected-dir-label"></p>
+          <button id="button-convert-project-select-dir">Select a directory</button>
+        </div>
+
+        <div class="box" id="main-ink-file-name-box">
+          Main ink file name:&nbsp;<input
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            type="text"
+            value=""
+            id="convert-project-main-ink-file"
+          />
+          <div id="main-ink-file-info"></div>
+        </div>
+
+        <div class="box" id="entry-file-name-box">
+          Entry .js file name:&nbsp;<input
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            type="text"
+            value=""
+            id="convert-project-entry-file"
+          />
+          <div id="entry-file-info"></div>
+        </div>
+
+        <div class="box">
+          <div id="entry-file-overwrite-warning"></div>
+        </div>
+
+        <div>
+          <button id="button-convert-project-done" class="confirm">Convert this Project!</button>
+          <button id="button-convert-project-abort" class="cancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="run.js"></script>
+  </body>
+</html>
