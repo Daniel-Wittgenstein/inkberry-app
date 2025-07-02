@@ -4,6 +4,16 @@
   "description": "-",
   "main": "core/main.js",
   "build": {
+    "extraResources": [
+      {
+        "from": "story-templates",
+        "to": "story-templates"
+      },
+      {
+        "from": "ink-js-runtime",
+        "to": "ink-js-runtime"
+      }
+    ],
     "appId": "com.inkberry.inkberry",
     "productName": "inkberry",
     "mac": {
