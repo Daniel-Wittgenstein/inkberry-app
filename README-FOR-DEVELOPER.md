@@ -41,15 +41,6 @@ We do not do GitHub releases.
 
 Instead just download the executables from there.
 
-Then you have to unzip them and add the relevant folders:
-
-+ ink-js-runtime
-+ story-templates
-
-Yes, you have to do this manually.
-
-Zip it up again and it should be a working app (hopefully).
-
 # Testing finished App
 
 npm run build-linux

@@ -1,5 +1,8 @@
 const { app } = require("electron");
 const path = require("path");
+const isDev = !app.isPackaged;
+
+const process = require('process');
 
 // #################################
 // ########### CONSTANTS ###########
@@ -16,10 +19,12 @@ const INK_PACKAGE_NAME = "ink-package.json";
 
 const DEFAULT_ENTRY_FILE = "story.js";
 const DEFAULT_INK_MAIN_FILE = "story.ink";
-const INDEX_HTML = "index.html";
 
-const STORY_TEMPLATES_DIR = "./story-templates";
-const INK_RUNTIME_PATH = "./ink-js-runtime/ink.js";
+const projectDir = isDev ? path.resolve(__dirname, '..') : process.resourcesPath;
+
+const STORY_TEMPLATES_DIR = path.join(projectDir, 'story-templates');
+  
+const INK_RUNTIME_PATH = path.join(projectDir, 'ink-js-runtime/ink.js');
 
 const STORY_TEMPLATE_ORDER_DEFAULT_PRIO = 20;
 
