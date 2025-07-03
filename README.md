@@ -5,7 +5,7 @@ Inkberry is a free and open-source tool. Its aim is to make the creation of web 
 
 While Inky is a great tool for game creation, it lacks a live browser preview. That’s where inkberry comes in! Inkberry automatically recompiles your story when it changes and displays the result in a window that is pretty much like a browser. This allows you to quickly test how your game behaves.
 
-Inkberry is not a replacement for Inky, but rather a companion to it. In fact, you are supposed to use both in tandem. :)
+Inkberry is not a replacement for Inky, but rather a companion to it. In fact, you are supposed to use both in tandem.
 
 (Alternatively, instead of using Inky, you can also use VS code with the Ink integration or any other text editor, but Inky is the recommended choice for beginners.)
 
