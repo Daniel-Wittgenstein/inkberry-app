@@ -7,18 +7,6 @@ While Inky is a great tool for game creation, it lacks a live browser preview. T
 
 Inkberry is not a replacement for Inky, but rather a companion to it. In fact, you are supposed to use both in tandem. :)
 
-# Docs
-
-[Docs](https://github.com/Daniel-Wittgenstein/inkberry-app/blob/main/docs/index.html)
-
-# Download Inkberry
-
-- [Linux](https://github.com/Daniel-Wittgenstein/inkberry-app/releases/tag/0.0.11/inkberry-linux-x64.zip)
-
-- [Mac-arm64](https://github.com/Daniel-Wittgenstein/inkberry-app/releases/tag/0.0.11/inkberry-mac-arm64.zip)
-
-- [Mac-x64](https://github.com/Daniel-Wittgenstein/inkberry-app/releases/tag/0.0.11/inkberry-mac-x64.zip)
-
-- [Windows](https://github.com/Daniel-Wittgenstein/inkberry-app/releases/tag/0.0.11/inkberry-windows-x64.zip)
+[Download](https://github.com/Daniel-Wittgenstein/inkberry-app/releases/tag/0.0.11/)
 
 
