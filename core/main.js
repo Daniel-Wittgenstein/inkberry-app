@@ -78,6 +78,8 @@ const AdmZip = require('adm-zip');
 
 const userSettingsManager = require("./userSettingsManager.js");
 const createTimestampedDir = require("./createTimeStampedDir.js");
+const sanitizeDirName = require('./sanitizeDirName.js');
+
 userSettingsManager.init(USER_SETTINGS_JSON);
 
 // #################################
@@ -289,7 +291,7 @@ function openInFileManager() {
 
 
 async function publish() {
-  
+
   const jsEntryFile = path.join(
     store.openedProjectPath,
     MAIN_JS_ENTRY_FILE
@@ -310,8 +312,6 @@ async function publish() {
     return;
   }
 
-  createTimestampedDir(store.openedProjectPath, "exported")
-
   const isModule = false;
 
   const buildResult = await esbuild.build({
@@ -326,6 +326,15 @@ async function publish() {
   const bundledJS = buildResult.outputFiles[0].text;
 
   console.log(bundledJS);
+
+  const exportedDirName = "exported " +
+    sanitizeDirName(store.currentProjectInkPackageSettings.projectName);
+
+  const newlyCreatedDir = createTimestampedDir(app.getPath("documents"), exportedDirName);
+
+  await copyDir(store.openedProjectPath, newlyCreatedDir);
+
+  console.log(111, store.openedProjectPath, exportedDirName)
 
 }
 
