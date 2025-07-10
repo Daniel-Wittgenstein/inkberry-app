@@ -79,6 +79,8 @@ const AdmZip = require('adm-zip');
 const userSettingsManager = require("./userSettingsManager.js");
 const createTimestampedDir = require("./createTimeStampedDir.js");
 const sanitizeDirName = require('./sanitizeDirName.js');
+const bundleAllJsFilesInDir = require("./bundleAllJsFilesInDir.js");
+
 
 userSettingsManager.init(USER_SETTINGS_JSON);
 
@@ -312,20 +314,27 @@ async function publish() {
     return;
   }
 
-  const isModule = false;
 
-  const buildResult = await esbuild.build({
-    entryPoints: [jsEntryFile],
-    bundle: true,
-    platform: 'browser',
-    format: isModule ? 'esm' : 'iife',
-    minify: true,
-    write: false,  // don't write to disk yet, get result in memory
-  });
+  const content = fs.readFileSync(jsEntryFile, 'utf8');
+  const isModule = /\bimport\b/.test(content);
 
-  const bundledJS = buildResult.outputFiles[0].text;
+  let bundledJs;
 
-  console.log(bundledJS);
+  if (isModule) {
+    const buildResult = await esbuild.build({
+      entryPoints: [jsEntryFile],
+      bundle: true,
+      platform: 'browser',
+      format: 'esm',
+      minify: true,
+      write: false,  // don't write to disk yet, get result in memory
+    });
+    bundledJs = buildResult.outputFiles[0].text;
+  } else {
+    bundledJs = bundleAllJsFilesInDir(store.openedProjectPath);
+  }
+
+  console.log(bundledJs);
 
   const exportedDirName = "exported " +
     sanitizeDirName(store.currentProjectInkPackageSettings.projectName);
@@ -334,8 +343,10 @@ async function publish() {
 
   await copyDir(store.openedProjectPath, newlyCreatedDir);
 
-  console.log(111, store.openedProjectPath, exportedDirName)
+  console.log(111, store.openedProjectPath, exportedDirName);
+  console.log(222, bundledJs)
 
+  //xyzzy
 }
 
 
