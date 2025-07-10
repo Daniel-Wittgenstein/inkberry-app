@@ -8,6 +8,10 @@ const process = require('process');
 // ########### CONSTANTS ###########
 // #################################
 
+const MAIN_JS_ENTRY_FILE = "main.js" // for bundling
+
+const HTML_ENTRY_FILE = "index.html" // for bundling
+
 const USER_TEMPLATES_DIR = path.join(app.getPath("documents"), "inkberry-templates");
 
 const USER_SETTINGS_JSON = path.join(app.getPath("userData"), "settings.json");
@@ -57,6 +61,7 @@ const WEB_PREFERENCES = {
 // ########### IMPORTS #############
 // #################################
 
+const esbuild = require('esbuild');
 const { copyDir } = require("./copyDir");
 const { normalizeProjectPathAppearance } = require("./utils");
 const inkjs = require("inkjs/full");
@@ -72,6 +77,7 @@ const rebuildSources = require("./rebuildSources.js");
 const AdmZip = require('adm-zip');
 
 const userSettingsManager = require("./userSettingsManager.js");
+const createTimestampedDir = require("./createTimeStampedDir.js");
 userSettingsManager.init(USER_SETTINGS_JSON);
 
 // #################################
@@ -129,6 +135,15 @@ function setMenu() {
           },
         },
         
+        {
+          id: "publish",
+          label: "Publish",
+          enabled: false,
+          click: async () => {
+            await publish();
+          },
+        },
+
         {
           id: "close-project",
           label: "Close Project",
@@ -272,8 +287,52 @@ function openInFileManager() {
   shell.openPath(store.openedProjectPath); 
 }
 
+
+async function publish() {
+  
+  const jsEntryFile = path.join(
+    store.openedProjectPath,
+    MAIN_JS_ENTRY_FILE
+  );
+
+  const htmlEntryFile = path.join(
+    store.openedProjectPath,
+    HTML_ENTRY_FILE
+  );
+
+  if (!fs.existsSync(jsEntryFile)) {
+    dialog.showErrorBox('File Not Found', `JS entry file not found:\n${jsEntryFile}`);
+    return;
+  }
+
+  if (!fs.existsSync(htmlEntryFile)) {
+    dialog.showErrorBox('File Not Found', `HTML entry file not found:\n${jsEntryFile}`);
+    return;
+  }
+
+  createTimestampedDir(store.openedProjectPath, "exported")
+
+  const isModule = false;
+
+  const buildResult = await esbuild.build({
+    entryPoints: [jsEntryFile],
+    bundle: true,
+    platform: 'browser',
+    format: isModule ? 'esm' : 'iife',
+    minify: true,
+    write: false,  // don't write to disk yet, get result in memory
+  });
+
+  const bundledJS = buildResult.outputFiles[0].text;
+
+  console.log(bundledJS);
+
+}
+
+
 function closeProject() {
   disableMenuItem("open-in-file-manager");
+  disableMenuItem("publish");
   disableMenuItem("close-project");
   win.loadFile(path.join(__dirname, "../ui/index.html"));
 }
@@ -664,6 +723,7 @@ function openProject(projectPath) {
           clearLocalStorage();
           win.loadURL(`http://localhost:${chosenPort}`);
           enableMenuItem("open-in-file-manager");
+          enableMenuItem("publish");
           enableMenuItem("close-project");
         },
         0 //bump up if you want to take a peek at the user console output.
