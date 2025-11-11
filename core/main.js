@@ -67,6 +67,7 @@ const chokidar = require("chokidar");
 const { shell } = require("electron");
 const { autoDetectEntryFile } = require("./autoDetect.js");
 const adjustWindow = require("./adjustWindow.js");
+const buildAssetMap = require("./buildAssetMap.js");
 const { startLocalServer, shutdownLocalServer } = require("./localServer.js");
 const rebuildSources = require("./rebuildSources.js");
 const AdmZip = require('adm-zip');
@@ -156,6 +157,19 @@ function setMenu() {
             adjustWindow("right");
           },
         },
+      ],
+    },
+
+    {
+      label: "Build",
+      submenu: [
+        {
+          label: "Build Asset Map",
+          click: () => {
+            buildAssetMap(store.openedProjectPath);
+          },
+        },
+
       ],
     },
 
