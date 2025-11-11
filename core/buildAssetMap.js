@@ -21,8 +21,7 @@ function buildAssetMap(pathToStoryFolder) {
     return;
   }*/
   const jsonStr = JSON.stringify(assetMap, null, 2)
-  const saferJsonStr = jsonStr.replace(/`/g, '\\`')
-  const content = "var _$_xAssetMap = `" + saferJsonStr + "`"
+  const content = "var _$_xAssetMap = " + jsonStr
   fs.writeFileSync(assetMapFileName, content, "utf8");
   dialog.showMessageBox({ message: "Asset map created successfully!" })
 }
