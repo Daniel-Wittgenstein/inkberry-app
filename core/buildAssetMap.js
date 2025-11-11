@@ -28,8 +28,7 @@ function buildAssetMap(pathToStoryFolder) {
 }
 
 
-function getAssetType(filePath) {
-  const ext = path.extname(filePath).toLowerCase();
+function getAssetType(ext) {
   const imageExt = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg'];
   const audioExt = ['.mp3', '.wav', '.ogg', '.flac', '.m4a'];
   const videoExt = ['.mp4', '.mov', '.avi', '.mkv', '.webm'];
@@ -43,6 +42,12 @@ function getAssetType(filePath) {
     return 'video';
   }
   return 'other';
+}
+
+
+function sanitizeExt(ext) {
+  if (ext === "jpg") return "jpeg"
+  return ext
 }
 
 
@@ -68,7 +73,11 @@ function generateAssetMap(mainPath) {
 
         const fileContent = fs.readFileSync(fullPath);
         const base64 = fileContent.toString('base64');
-        const type = getAssetType(fullPath);
+        
+        const ext = path.extname(fullPath).toLowerCase();
+
+        const type = getAssetType(ext);
+        const extSanitized = sanitizeExt(ext);
 
         if (type === "other") {
           continue
@@ -79,6 +88,7 @@ function generateAssetMap(mainPath) {
         finalMap[key] = {
           type,
           value: base64,
+          ext: extSanitized.substring(1),
         };
 
       }
