@@ -11,7 +11,7 @@ function buildAssetMap(pathToStoryFolder) {
     return
   }
 
-  const assetMapFileName = path.join(pathToStoryFolder, '_xAssetMap.js');
+  const assetMapFileName = path.join(pathToStoryFolder, 'xAssetMapAuto.js');
 
   let assetMap
   //try {
