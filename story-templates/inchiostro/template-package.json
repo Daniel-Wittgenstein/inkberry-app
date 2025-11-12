@@ -1,0 +1,13 @@
+{
+  "id": "inchiostro",
+  "name": "Inchiostro",
+  "version": "0.0.1",
+  "author": "Daniel Wittgenstein",
+  "license": "MIT",
+  "descr": "An Ink template.",
+  "remote": {
+    "meta": "https://raw.githubusercontent.com/Daniel-Wittgenstein/inchiostro-dist/refs/heads/main/meta.json",
+    "latest": "https://raw.githubusercontent.com/Daniel-Wittgenstein/inchiostro-dist/refs/heads/main/inchiostro-latest.zip"
+  },
+  "useSources": true
+}

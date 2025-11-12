@@ -242,6 +242,12 @@ function populateStoryTemplateSelector() {
   for (const template of app.storyTemplates) {
     index++;
     html += getHtmlForStoryTemplateBox(template, index);
+    if (template.package.remote) {
+      window.api.send("toMain", {
+        signal: "fetchTemplateFromRemote",
+        template,
+      });
+    }
   }
   html += `</div>`;
   stsLeft.innerHTML = html;

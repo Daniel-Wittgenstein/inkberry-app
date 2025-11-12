@@ -71,6 +71,7 @@ const buildAssetMap = require("./buildAssetMap.js");
 const { startLocalServer, shutdownLocalServer } = require("./localServer.js");
 const rebuildSources = require("./rebuildSources.js");
 const AdmZip = require('adm-zip');
+const https = require('https');
 
 const userSettingsManager = require("./userSettingsManager.js");
 userSettingsManager.init(USER_SETTINGS_JSON);
@@ -298,6 +299,101 @@ function logForUserOpeningProject(msg) {
   send({ signal: "openingProjectUserLog", msg });
 }
 
+
+
+
+
+function fetchJSON(url) {
+  return new Promise((resolve, reject) => {
+    https.get(url, (res) => {
+      let data = '';
+
+      if (res.statusCode !== 200) {
+        reject(new Error(`Request failed with status code: ${res.statusCode}`));
+        res.resume();
+        return;
+      }
+
+      res.setEncoding('utf8'); 
+
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      res.on('end', () => {
+        console.log('Raw data received:', data);
+        console.log('Data length:', data.length);
+        
+        try {
+          const json = JSON.parse(data);
+          resolve(json);
+        } catch (e) {
+          reject(new Error(`Failed to parse JSON: ${e.message}. Raw data: ${data}`));
+        }
+      });
+
+    }).on('error', (err) => {
+      reject(err);
+    });
+  });
+}
+
+
+async function fetchTemplateFromRemote(template) {
+  const currentVersion = template.package.version;
+  const path = template.templatePath;
+  const remote = template.package.remote;
+ 
+  console.log("template " + template.package.id + ": check remote")
+  console.log("url", remote.meta)
+
+  let jsonData;
+  try {
+    jsonData = await fetchJSON(remote.meta);
+  } catch(err) {
+    console.log('Could not fetch or parse meta file for this template:', err.message, "(Okay.)");
+    return;
+  }
+
+  const latestVersion = jsonData.latestVersion;
+
+  if (!latestVersion || typeof latestVersion !== 'string' || getDotAmount(latestVersion) !== 2) {
+    // invalid version string
+    console.log("meta JSON file fetched but contains wrong latestVersion format (Okay.)");
+    return
+  }
+
+  console.log(`currentVersion: ${currentVersion}, latestVersion: ${latestVersion}`);
+
+  if (!aIsHigherVersionThanB(latestVersion, currentVersion)) {
+    console.log("No new version of this template available.");
+    return
+  }
+
+  console.log('template ' + template.package.id + ': a more current version is available!');
+
+  
+  
+}
+
+
+
+function getDotAmount (str) {
+  return (str.match(/\./g) || []).length
+}
+
+
+function aIsHigherVersionThanB(a, b) {
+  const [a1, a2, a3] = a.split('.').map(Number);
+  const [b1, b2, b3] = b.split('.').map(Number);
+  if (a1 > b1) return true
+  if (a1 < b1) return false
+  if (a2 > b2) return true
+  if (a2 < b2) return false
+  if (a3 > b3) return true
+  return false
+}
+
 function setupIpcCommunication() {
   ipcMain.handle("startUpRequestData", async (event, data) => {
     return {
@@ -371,6 +467,9 @@ function setupIpcCommunication() {
     } else if (msg.signal === "directlyOpenProject") {
       openProject(msg.path);
     
+    } else if (msg.signal === "fetchTemplateFromRemote") {
+      fetchTemplateFromRemote(msg.template);
+
     } else {
       throw new Error(`Invalid signal.`);
     }
