@@ -52,10 +52,35 @@ window.api.receive("fromMain", (data) => {
   } else if (data.signal === "onProjectFilesCreated") {
     showWaitingForProjectToOpenScreen();
 
+  } else if (data.signal === "newTemplateVersionFound") {
+    newTemplateVersionFound(data.template, data.latestVersion)
+
   } else {
     throw new Error("Invalid signal: " + data.signal);
   }
 });
+
+
+function newTemplateVersionFound(template, latestVersion) {
+  const el = document.getElementById("new-template-displayer")
+  const child = document.createElement("div")
+  child.innerHTML = `
+    <div class="new-template-notify">
+      Template "${template.package.name}": a new version of this template is available.<br>
+      Your version: ${template.package.version}<br>
+      Latest version: ${latestVersion}<br>
+      URL: ${template.package.remote.latest}<br>
+    </div>
+  `
+
+  const button = document.createElement("button")
+  button.innerHTML = "UPDATE TEMPLATE"
+
+  child.firstElementChild.appendChild(button)
+
+  el.appendChild(child)
+
+}
 
 function hideWarning() {
   document.getElementById("warning").style.display = "none";
@@ -244,7 +269,7 @@ function populateStoryTemplateSelector() {
     html += getHtmlForStoryTemplateBox(template, index);
     if (template.package.remote) {
       window.api.send("toMain", {
-        signal: "fetchTemplateFromRemote",
+        signal: "checkIfNewTemplateVersionExists",
         template,
       });
     }

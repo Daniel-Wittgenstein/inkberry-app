@@ -339,11 +339,50 @@ function fetchJSON(url) {
 }
 
 
-async function fetchTemplateFromRemote(template) {
+function fetchZip(url, outputPath) {
+  return new Promise((resolve, reject) => {
+    const file = fs.createWriteStream(outputPath);
+
+    https.get(url, (res) => {
+      if (res.statusCode !== 200) {
+        reject(new Error(`Request failed with status code: ${res.statusCode}`));
+        res.resume();
+        return;
+      }
+
+      res.pipe(file);
+
+      file.on('finish', () => {
+        file.close();
+        resolve(outputPath);
+      });
+
+    }).on('error', (err) => {
+       // Clean up partial file:
+      fs.unlink(outputPath, () => {});
+      reject(err);
+    });
+
+    file.on('error', (err) => {
+      // Clean up partial file:
+      fs.unlink(outputPath, () => {});
+      reject(err);
+    });
+  });
+}
+
+
+async function checkIfNewTemplateVersionExists(template) {
   const currentVersion = template.package.version;
-  const path = template.templatePath;
   const remote = template.package.remote;
  
+  if (remote.meta !== "https://raw.githubusercontent.com/Daniel-Wittgenstein/inchiostro-dist/refs/heads/main/meta.json") {
+    // Only download from approved Inchiostro source for now because of security.
+    // But in theory, different templates could set their own remote URLs
+    // and update themselves from there.
+    return
+  }
+
   console.log("template " + template.package.id + ": check remote")
   console.log("url", remote.meta)
 
@@ -372,10 +411,19 @@ async function fetchTemplateFromRemote(template) {
 
   console.log('template ' + template.package.id + ': a more current version is available!');
 
-  
-  
+  send({ signal: "newTemplateVersionFound", template, latestVersion });
 }
 
+/*
+async function fetchTemplateZipFile() {
+  try {
+    const path = await fetchZip('https://example.com/file.zip', './download.zip');
+    console.log('Downloaded to:', path);
+  } catch (err) {
+    console.error('Download failed:', err.message);
+  }
+}
+*/
 
 
 function getDotAmount (str) {
@@ -467,8 +515,8 @@ function setupIpcCommunication() {
     } else if (msg.signal === "directlyOpenProject") {
       openProject(msg.path);
     
-    } else if (msg.signal === "fetchTemplateFromRemote") {
-      fetchTemplateFromRemote(msg.template);
+    } else if (msg.signal === "checkIfNewTemplateVersionExists") {
+      checkIfNewTemplateVersionExists(msg.template);
 
     } else {
       throw new Error(`Invalid signal.`);
