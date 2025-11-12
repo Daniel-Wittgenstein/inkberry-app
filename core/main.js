@@ -375,7 +375,7 @@ function fetchZip(url, outputPath) {
 
 async function updateTemplate(template) {
   const url = template.package.remote.latest
-  if (url !== "https://raw.githubusercontent.com/Daniel-Wittgenstein/inchiostro-dist/refs/heads/main/inchiostro-latest.zip") {
+  if (url !== `https://raw.githubusercontent.com/Daniel-Wittgenstein/inchiostro-dist/refs/heads/main/inchiostro-latest.zip?cb=${Date.now()}`) {
     // Only download from approved Inchiostro source for now because of security.
     // But in theory, different templates could set their own remote URLs
     // and update themselves from there.
@@ -432,8 +432,8 @@ async function updateTemplate(template) {
 async function checkIfNewTemplateVersionExists(template) {
   const currentVersion = template.package.version;
   const remote = template.package.remote;
- 
-  if (remote.meta !== "https://raw.githubusercontent.com/Daniel-Wittgenstein/inchiostro-dist/refs/heads/main/meta.json") {
+
+  if (remote.meta !== `https://raw.githubusercontent.com/Daniel-Wittgenstein/inchiostro-dist/refs/heads/main/meta.json?cb=${Date.now()}`) {
     // Only download from approved Inchiostro source for now because of security.
     // But in theory, different templates could set their own remote URLs
     // and update themselves from there.

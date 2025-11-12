@@ -239,6 +239,8 @@ async function startApp() {
   app.storyTemplates = result.storyTemplates;
   populateStoryTemplateSelector();
 
+  checkRemotes()
+
   switchToScreen("start-screen");
 }
 
@@ -250,7 +252,51 @@ function selectTemplateByIndex(templateIndex) {
   app.selectedStoryTemplate = app.storyTemplates[templateIndex];
 }
 
-function populateStoryTemplateSelector(checkRemote = true) {
+function checkRemotes() {
+
+  let anyRemote = false
+  for (const template of app.storyTemplates) {
+    if (template?.package?.remote) anyRemote = true
+  }
+
+  if (!anyRemote) {
+    console.log("No templates with remote. Okay.")
+    return
+  }
+
+  const templatesByIdBuckets = {};
+
+  for (const template of app.storyTemplates) {
+    if (!templatesByIdBuckets[template.package.id]) {
+      templatesByIdBuckets[template.package.id] = [];
+    }
+    templatesByIdBuckets[template.package.id].push(template);
+  }
+
+  const final = []
+
+  for (const id of Object.keys(templatesByIdBuckets)) {
+    const list = templatesByIdBuckets[id];
+    final.push(highestVersionTemplate(list))
+  }
+
+  console.log("templates: highest version:", final.map(t => {
+    return {id: t.package.id, version: t.package.version}
+  }));
+
+  for (const templ of final) {
+    if (!(templ?.package?.remote)) continue
+    console.log(`${templ.package.id} ${templ.package.version}: checking if remote has higher version.`)
+    window.api.send("toMain", {
+      signal: "checkIfNewTemplateVersionExists",
+      template: templ,
+    });
+  }
+}
+
+
+
+function populateStoryTemplateSelector() {
   const el = document.getElementById("story-template-selector");
 
   if (!app.storyTemplates) {
@@ -277,17 +323,41 @@ function populateStoryTemplateSelector(checkRemote = true) {
   for (const template of app.storyTemplates) {
     index++;
     html += getHtmlForStoryTemplateBox(template, index);
-    if (template.package.remote && checkRemote) {
-      window.api.send("toMain", {
-        signal: "checkIfNewTemplateVersionExists",
-        template,
-      });
-    }
   }
   html += `</div>`;
   stsLeft.innerHTML = html;
   selectTemplateByIndex(0); //select first entry
+
 }
+
+
+function highestVersionTemplate(templateList) {
+  function toNumber(template) {
+    if (template?.package?.version === 0) {
+      return 0
+    }
+    if (!template?.package?.version) {
+      return -1
+    }
+    if (typeof template.package.version !== "string") {
+      return -1
+    }
+    const str = template.package.version
+    const [a, b, c] = str.split(".").map(Number)
+    return a * 100_000_000 + b * 10_000 + c
+  }
+
+  let highest = templateList[0]
+  for (const templ of templateList) {
+    const v = toNumber(templ)
+    const prev = toNumber(highest)
+    if (v > prev) {
+      highest = templ
+    }
+  }
+  return highest
+}
+
 
 function showWaitingForProjectToOpenScreen() {
   const el = document.getElementById("opening-project-overlay");
