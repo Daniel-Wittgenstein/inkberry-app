@@ -72,6 +72,7 @@ const { startLocalServer, shutdownLocalServer } = require("./localServer.js");
 const rebuildSources = require("./rebuildSources.js");
 const AdmZip = require('adm-zip');
 const https = require('https');
+const fsPromiseVersion = require('fs/promises');
 
 const userSettingsManager = require("./userSettingsManager.js");
 userSettingsManager.init(USER_SETTINGS_JSON);
@@ -387,10 +388,10 @@ async function updateTemplate(template) {
 
   const zipName = "xTemplateUpdateZipxDownloadxxx.zip"
 
-  const downloadPath = path.resolve(USER_TEMPLATES_DIR, zipName)
+  const zipPath = path.resolve(USER_TEMPLATES_DIR, zipName)
 
   try {
-    await fetchZip(url, downloadPath);
+    await fetchZip(url, zipPath);
     console.log('Downloaded.');
   } catch (err) {
     dialog.showMessageBox({
@@ -400,7 +401,32 @@ async function updateTemplate(template) {
     return;
   }
 
-  
+  const zipsParentDir = path.dirname(zipPath);
+  const newDirName = template.package.id + template.package.version.replaceAll(".", "_");
+  const newTemplateDir = path.resolve(zipsParentDir, newDirName);
+
+  console.log(2, newTemplateDir)
+  await fsPromiseVersion.mkdir(newTemplateDir, { recursive: true });
+
+  console.log("wtf")
+
+  try {
+    const zip = new AdmZip(zipPath);
+    zip.extractAllTo(newTemplateDir, true); // overwrite = true
+  } catch (err) {
+    dialog.showMessageBox({
+      message: `Extracting zip failed.`,
+      type: "error",
+    });
+    return;
+  }
+
+  fs.unlinkSync(zipPath);
+
+  dialog.showMessageBox({
+    message: `Successfully updated!`,
+    type: "none",
+  });
   
 }
 
