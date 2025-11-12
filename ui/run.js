@@ -77,6 +77,13 @@ function newTemplateVersionFound(template, latestVersion) {
 
   child.firstElementChild.appendChild(button)
 
+  button.addEventListener("click", () => {
+    window.api.send("toMain", {
+      signal: "updateTemplate",
+      template,
+    })
+  })
+
   el.appendChild(child)
 
 }

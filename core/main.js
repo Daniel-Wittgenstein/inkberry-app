@@ -354,7 +354,7 @@ function fetchZip(url, outputPath) {
 
       file.on('finish', () => {
         file.close();
-        resolve(outputPath);
+        resolve();
       });
 
     }).on('error', (err) => {
@@ -369,6 +369,39 @@ function fetchZip(url, outputPath) {
       reject(err);
     });
   });
+}
+
+
+async function updateTemplate(template) {
+  const url = template.package.remote.latest
+  if (url !== "https://raw.githubusercontent.com/Daniel-Wittgenstein/inchiostro-dist/refs/heads/main/inchiostro-latest.zip") {
+    // Only download from approved Inchiostro source for now because of security.
+    // But in theory, different templates could set their own remote URLs
+    // and update themselves from there.
+    dialog.showMessageBox({
+      message: `URL blocked for security reasons! Download manually, please!`,
+      type: "error",
+    });
+    return;
+  }
+
+  const zipName = "xTemplateUpdateZipxDownloadxxx.zip"
+
+  const downloadPath = path.resolve(USER_TEMPLATES_DIR, zipName)
+
+  try {
+    await fetchZip(url, downloadPath);
+    console.log('Downloaded.');
+  } catch (err) {
+    dialog.showMessageBox({
+      message: `Download failed.`,
+      type: "error",
+    });
+    return;
+  }
+
+  
+  
 }
 
 
@@ -414,16 +447,6 @@ async function checkIfNewTemplateVersionExists(template) {
   send({ signal: "newTemplateVersionFound", template, latestVersion });
 }
 
-/*
-async function fetchTemplateZipFile() {
-  try {
-    const path = await fetchZip('https://example.com/file.zip', './download.zip');
-    console.log('Downloaded to:', path);
-  } catch (err) {
-    console.error('Download failed:', err.message);
-  }
-}
-*/
 
 
 function getDotAmount (str) {
@@ -517,6 +540,9 @@ function setupIpcCommunication() {
     
     } else if (msg.signal === "checkIfNewTemplateVersionExists") {
       checkIfNewTemplateVersionExists(msg.template);
+
+    } else if (msg.signal === "updateTemplate") {
+      updateTemplate(msg.template);
 
     } else {
       throw new Error(`Invalid signal.`);
