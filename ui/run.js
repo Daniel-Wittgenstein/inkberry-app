@@ -66,15 +66,14 @@ function newTemplateVersionFound(template, latestVersion) {
   const child = document.createElement("div")
   child.innerHTML = `
     <div class="new-template-notify">
-      Template "${template.package.name}": a new version of this template is available.<br>
+      Template <b>"${template.package.name}"</b>: a new version of this template is available!<br>
       Your version: ${template.package.version}<br>
       Latest version: ${latestVersion}<br>
-      URL: ${template.package.remote.latest}<br>
     </div>
   `
 
   const button = document.createElement("button")
-  button.innerHTML = "UPDATE TEMPLATE"
+  button.innerHTML = "DOWNLOAD AND UPDATE TEMPLATE"
 
   child.firstElementChild.appendChild(button)
 
