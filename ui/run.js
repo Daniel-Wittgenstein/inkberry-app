@@ -55,6 +55,10 @@ window.api.receive("fromMain", (data) => {
   } else if (data.signal === "newTemplateVersionFound") {
     newTemplateVersionFound(data.template, data.latestVersion)
 
+  } else if (data.signal === "refreshTemplateViewAfterDownload") {
+    alert("Successfully updated template! Realoding app now.");
+    window.location.reload();
+
   } else {
     throw new Error("Invalid signal: " + data.signal);
   }
@@ -246,7 +250,7 @@ function selectTemplateByIndex(templateIndex) {
   app.selectedStoryTemplate = app.storyTemplates[templateIndex];
 }
 
-function populateStoryTemplateSelector() {
+function populateStoryTemplateSelector(checkRemote = true) {
   const el = document.getElementById("story-template-selector");
 
   if (!app.storyTemplates) {
@@ -273,7 +277,7 @@ function populateStoryTemplateSelector() {
   for (const template of app.storyTemplates) {
     index++;
     html += getHtmlForStoryTemplateBox(template, index);
-    if (template.package.remote) {
+    if (template.package.remote && checkRemote) {
       window.api.send("toMain", {
         signal: "checkIfNewTemplateVersionExists",
         template,

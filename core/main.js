@@ -402,13 +402,11 @@ async function updateTemplate(template) {
   }
 
   const zipsParentDir = path.dirname(zipPath);
-  const newDirName = template.package.id + template.package.version.replaceAll(".", "_");
+  const newDirName = template.package.id + "_" + template.package.version.replaceAll(".", "_");
   const newTemplateDir = path.resolve(zipsParentDir, newDirName);
 
   console.log(2, newTemplateDir)
   await fsPromiseVersion.mkdir(newTemplateDir, { recursive: true });
-
-  console.log("wtf")
 
   try {
     const zip = new AdmZip(zipPath);
@@ -423,10 +421,10 @@ async function updateTemplate(template) {
 
   fs.unlinkSync(zipPath);
 
-  dialog.showMessageBox({
-    message: `Successfully updated!`,
-    type: "none",
-  });
+  store.storyTemplates = []
+  loadStoryTemplates()
+
+  send({ signal: "refreshTemplateViewAfterDownload", template });
   
 }
 
