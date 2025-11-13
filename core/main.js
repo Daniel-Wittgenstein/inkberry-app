@@ -446,7 +446,7 @@ function fetchZip(url, outputPath) {
 
 
 async function createNewProjectFromRemote(newProjectPath, projectName, 
-  remoteUrl) {
+    remoteUrl) {
   
   console.log(`start creating new project from remote url: `, newProjectPath, projectName, remoteUrl)
 
@@ -500,7 +500,11 @@ async function createNewProjectFromRemote(newProjectPath, projectName,
 
   console.log("project was successfully created from remote.")
 
+  createStandardFilesForNewProject(newProjectPath, projectName)
   
+  send({ signal: "onProjectFilesCreated" });
+
+  openProject(newProjectPath);
 
 }
 
@@ -1100,13 +1104,22 @@ function createNewProjectFiles(projectName, templatePath, newProjectPath, onFini
     } else {
       console.log("starting to copy", templatePath, "to", newProjectPath);
       await copyDir(templatePath, newProjectPath);
-      console.log("starting to write ink.js file")
-      fs.writeFileSync(path.join(newProjectPath, "ink.js"), fs.readFileSync(INK_RUNTIME_PATH));
-      createInkPackageJson(newProjectPath, projectName, DEFAULT_ENTRY_FILE, DEFAULT_INK_MAIN_FILE);
+
+      createStandardFilesForNewProject(newProjectPath, projectName)
+      
       onFinished();
     }
   });
 }
+
+
+function createStandardFilesForNewProject(newProjectPath, projectName) {
+  console.log("starting to write ink.js file")
+  fs.writeFileSync(path.join(newProjectPath, "ink.js"), fs.readFileSync(INK_RUNTIME_PATH));
+  console.log("starting to create ink-package.json file")
+  createInkPackageJson(newProjectPath, projectName, DEFAULT_ENTRY_FILE, DEFAULT_INK_MAIN_FILE);
+}
+
 
 function addToListOfRecentProjects(name, path) {
   if (!store.userSettings.recentProjects) {
