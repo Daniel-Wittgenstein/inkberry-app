@@ -30,8 +30,10 @@ const REMOTE_TEMPLATES = [
   {
     id: "inchiostro",
     name: "Inchiostro",
-    metaUrl: "https://raw.githubusercontent.com/Daniel-Wittgenstein/inchiostro-dist/refs/heads/main/meta.json",
-    zipUrl: "https://raw.githubusercontent.com/Daniel-Wittgenstein/inchiostro-dist/refs/heads/main/inchiostro-latest.zip",
+    templatePackageUrl: 
+      "https://raw.githubusercontent.com/Daniel-Wittgenstein/inchiostro-dist/refs/heads/main/template-package.json",
+    zipUrl: 
+      "https://raw.githubusercontent.com/Daniel-Wittgenstein/inchiostro-dist/refs/heads/main/inchiostro-latest.zip",
   }
 ]
 
@@ -305,11 +307,53 @@ async function startApp() {
 
   loadStoryTemplates();
 
+  await loadRemoteStoryTemplates();
+
+  sortStoryTemplates();
+
   setMenu();
 
   createMainWindow();
 }
 
+
+async function loadRemoteStoryTemplates() {
+
+  for (const remoteTemplDef of REMOTE_TEMPLATES) {
+
+    console.log("checking for remote template ", remoteTemplDef.id)
+    if (!remoteTemplDef.templatePackageUrl || !remoteTemplDef.zipUrl || !remoteTemplDef.name
+      || !remoteTemplDef.id
+    ) {
+      console.log("Incorrect configuration. Skipping remote template", template.id)
+      return
+    }
+
+    let jsonDataPackage;
+    try {
+      jsonDataPackage = await fetchJSON(remoteTemplDef.templatePackageUrl);
+    } catch(err) {
+      console.log(`Could not fetch or parse meta file for remote template "${remoteTemplDef.id}":`, 
+        err.message, "(Proceeding.)");
+      return;
+    }
+
+    console.log("Found remote template-package.json for ", remoteTemplDef.id)
+
+    addStoryTemplate(jsonDataPackage, "", "remote");
+
+  }
+
+}
+
+
+function sortStoryTemplates() {
+  store.storyTemplates.sort((a, b) => {
+    const prioA = storyTemplateOrder[a.id] ?? STORY_TEMPLATE_ORDER_DEFAULT_PRIO;
+    const prioB = storyTemplateOrder[b.id] ?? STORY_TEMPLATE_ORDER_DEFAULT_PRIO;
+    return prioA - prioB || a.package.name.localeCompare(b.package.name);
+  });
+}
 
 function openInFileManager() {
   shell.openPath(store.openedProjectPath); 
@@ -332,6 +376,7 @@ function logForUserOpeningProject(msg) {
 
 
 function fetchJSON(url) {
+  console.log("fetch JSON from url", url)
   return new Promise((resolve, reject) => {
     https.get(url, (res) => {
       let data = '';
@@ -457,6 +502,7 @@ async function updateTemplate(template) {
 
 
 async function checkIfNewTemplateVersionExists(template) {
+  return
   const currentVersion = template.package.version;
   const remote = template.package.remote;
 
@@ -690,11 +736,6 @@ function loadStoryTemplates() {
     console.log("No user template directory found. Harmless.");
   }
 
-  store.storyTemplates.sort((a, b) => {
-    const prioA = storyTemplateOrder[a.id] ?? STORY_TEMPLATE_ORDER_DEFAULT_PRIO;
-    const prioB = storyTemplateOrder[b.id] ?? STORY_TEMPLATE_ORDER_DEFAULT_PRIO;
-    return prioA - prioB || a.package.name.localeCompare(b.package.name);
-  });
 }
 
 function addStoryTemplate(package, templatePath, templateType) {
