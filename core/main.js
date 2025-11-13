@@ -335,6 +335,11 @@ async function loadRemoteStoryTemplates() {
     } catch(err) {
       console.log(`Could not fetch or parse meta file for remote template "${remoteTemplDef.id}":`, 
         err.message, "(Proceeding.)");
+        addStoryTemplate({
+          id: remoteTemplDef.id,
+          name: remoteTemplDef.name,
+          descr: `Could not load from remote URL. Are you offline? Try going online and restart the app.`,
+        }, "", "BROKEN_REMOTE");
       return;
     }
 
@@ -501,7 +506,7 @@ async function createNewProjectFromRemote(newProjectPath, projectName,
   console.log("project was successfully created from remote.")
 
   createStandardFilesForNewProject(newProjectPath, projectName)
-  
+
   send({ signal: "onProjectFilesCreated" });
 
   openProject(newProjectPath);
@@ -554,6 +559,15 @@ async function setupIpcCommunication() {
       const templatePath = msg.selectedStoryTemplate.templatePath;
 
       const createFromRemote = (msg.selectedStoryTemplate.templateType === "remote")
+
+      if (msg.selectedStoryTemplate.templateType === "BROKEN_REMOTE") {
+        dialog.showMessageBox({
+          message: `Could not fetch from remote. If your are offline, `+
+            `go online and restart the app.`,
+          type: "error",
+        });
+        return
+      }
 
       if (createFromRemote) {
         await createNewProjectFromRemote(msg.filePath, msg.projectName, 
