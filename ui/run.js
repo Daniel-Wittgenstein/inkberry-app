@@ -239,8 +239,6 @@ async function startApp() {
   app.storyTemplates = result.storyTemplates;
   populateStoryTemplateSelector();
 
-  checkRemotes()
-
   switchToScreen("start-screen");
 }
 
@@ -251,49 +249,6 @@ function selectTemplateByIndex(templateIndex) {
   document.getElementById(`story-templ${templateIndex}`).checked = true;
   app.selectedStoryTemplate = app.storyTemplates[templateIndex];
 }
-
-function checkRemotes() {
-
-  let anyRemote = false
-  for (const template of app.storyTemplates) {
-    if (template?.package?.remote) anyRemote = true
-  }
-
-  if (!anyRemote) {
-    console.log("No templates with remote. Okay.")
-    return
-  }
-
-  const templatesByIdBuckets = {};
-
-  for (const template of app.storyTemplates) {
-    if (!templatesByIdBuckets[template.package.id]) {
-      templatesByIdBuckets[template.package.id] = [];
-    }
-    templatesByIdBuckets[template.package.id].push(template);
-  }
-
-  const final = []
-
-  for (const id of Object.keys(templatesByIdBuckets)) {
-    const list = templatesByIdBuckets[id];
-    final.push(highestVersionTemplate(list))
-  }
-
-  console.log("templates: highest version:", final.map(t => {
-    return {id: t.package.id, version: t.package.version}
-  }));
-
-  for (const templ of final) {
-    if (!(templ?.package?.remote)) continue
-    console.log(`${templ.package.id} ${templ.package.version}: checking if remote has higher version.`)
-    window.api.send("toMain", {
-      signal: "checkIfNewTemplateVersionExists",
-      template: templ,
-    });
-  }
-}
-
 
 
 function populateStoryTemplateSelector() {

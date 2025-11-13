@@ -445,44 +445,48 @@ function fetchZip(url, outputPath) {
 }
 
 
-async function updateTemplate(template) {
-  const url = template.package.remote.latest
-  if (url !== `https://raw.githubusercontent.com/Daniel-Wittgenstein/inchiostro-dist/refs/heads/main/inchiostro-latest.zip?cb=${Date.now()}`) {
-    // Only download from approved Inchiostro source for now because of security.
-    // But in theory, different templates could set their own remote URLs
-    // and update themselves from there.
+async function createNewProjectFromRemote(newProjectPath, projectName, 
+  remoteUrl) {
+  
+  console.log(`start creating new project from remote url: `, newProjectPath, projectName, remoteUrl)
+
+  if (fs.existsSync(newProjectPath)) {
     dialog.showMessageBox({
-      message: `URL blocked for security reasons! Download manually, please!`,
+      message: `Directory ${newProjectPath} exists already.`,
       type: "error",
+    });
+    return;
+  }
+
+  try {
+    await fsPromiseVersion.mkdir(newProjectPath, { recursive: true });
+  } catch (err) {
+    dialog.showMessageBox({
+      type: "error",
+      title: "Directory Creation Failed",
+      message: `Failed to create project directory: ${newProjectPath}\n${err.message}`,
     });
     return;
   }
 
   const zipName = "xTemplateUpdateZipxDownloadxxx.zip"
 
-  const zipPath = path.resolve(USER_TEMPLATES_DIR, zipName)
+  const zipPath = path.resolve(newProjectPath, zipName);
 
   try {
-    await fetchZip(url, zipPath);
-    console.log('Downloaded.');
+    await fetchZip(remoteUrl, zipPath);
+    console.log('Downloaded zip.');
   } catch (err) {
     dialog.showMessageBox({
-      message: `Download failed.`,
+      message: `Downloading zip failed.`,
       type: "error",
     });
     return;
   }
 
-  const zipsParentDir = path.dirname(zipPath);
-  const newDirName = template.package.id + "_" + template.package.version.replaceAll(".", "_");
-  const newTemplateDir = path.resolve(zipsParentDir, newDirName);
-
-  console.log(2, newTemplateDir)
-  await fsPromiseVersion.mkdir(newTemplateDir, { recursive: true });
-
   try {
     const zip = new AdmZip(zipPath);
-    zip.extractAllTo(newTemplateDir, true); // overwrite = true
+    zip.extractAllTo(newProjectPath, true); // overwrite = true
   } catch (err) {
     dialog.showMessageBox({
       message: `Extracting zip failed.`,
@@ -491,78 +495,19 @@ async function updateTemplate(template) {
     return;
   }
 
+  //cleanup: delete zip file:
   fs.unlinkSync(zipPath);
 
-  store.storyTemplates = []
-  loadStoryTemplates()
+  console.log("project was successfully created from remote.")
 
-  send({ signal: "refreshTemplateViewAfterDownload", template });
+  // xyzzy
   
-}
 
-
-async function checkIfNewTemplateVersionExists(template) {
-  return
-  const currentVersion = template.package.version;
-  const remote = template.package.remote;
-
-  if (remote.meta !== `https://raw.githubusercontent.com/Daniel-Wittgenstein/inchiostro-dist/refs/heads/main/meta.json?cb=${Date.now()}`) {
-    // Only download from approved Inchiostro source for now because of security.
-    // But in theory, different templates could set their own remote URLs
-    // and update themselves from there.
-    return
-  }
-
-  console.log("template " + template.package.id + ": check remote")
-  console.log("url", remote.meta)
-
-  let jsonData;
-  try {
-    jsonData = await fetchJSON(remote.meta);
-  } catch(err) {
-    console.log('Could not fetch or parse meta file for this template:', err.message, "(Okay.)");
-    return;
-  }
-
-  const latestVersion = jsonData.latestVersion;
-
-  if (!latestVersion || typeof latestVersion !== 'string' || getDotAmount(latestVersion) !== 2) {
-    // invalid version string
-    console.log("meta JSON file fetched but contains wrong latestVersion format (Okay.)");
-    return
-  }
-
-  console.log(`currentVersion: ${currentVersion}, latestVersion: ${latestVersion}`);
-
-  if (!aIsHigherVersionThanB(latestVersion, currentVersion)) {
-    console.log("No new version of this template available.");
-    return
-  }
-
-  console.log('template ' + template.package.id + ': a more current version is available!');
-
-  send({ signal: "newTemplateVersionFound", template, latestVersion });
 }
 
 
 
-function getDotAmount (str) {
-  return (str.match(/\./g) || []).length
-}
-
-
-function aIsHigherVersionThanB(a, b) {
-  const [a1, a2, a3] = a.split('.').map(Number);
-  const [b1, b2, b3] = b.split('.').map(Number);
-  if (a1 > b1) return true
-  if (a1 < b1) return false
-  if (a2 > b2) return true
-  if (a2 < b2) return false
-  if (a3 > b3) return true
-  return false
-}
-
-function setupIpcCommunication() {
+async function setupIpcCommunication() {
   ipcMain.handle("startUpRequestData", async (event, data) => {
     return {
       storyTemplates: store.storyTemplates,
@@ -570,7 +515,7 @@ function setupIpcCommunication() {
     };
   });
 
-  ipcMain.on("toMain", (event, msg) => {
+  ipcMain.on("toMain", async (event, msg) => {
     console.log("received message from renderer", msg);
 
     if (msg.signal === "openDocs") {
@@ -608,7 +553,7 @@ function setupIpcCommunication() {
       const createFromRemote = (msg.selectedStoryTemplate.templateType === "remote")
 
       if (createFromRemote) {
-        createNewProjectFromRemote(msg.filePath, msg.projectName, 
+        await createNewProjectFromRemote(msg.filePath, msg.projectName, 
           msg.selectedStoryTemplate.remoteUrl);
       } else {
         createNewProject(templatePath, msg.filePath, msg.projectName);
@@ -1127,10 +1072,6 @@ function onNewProjectSelectDir() {
     });
 }
 
-function createNewProjectFromRemote(targetFilePath, projectName, 
-  remoteUrl) {
-  console.log(`create new project from remote url: `, targetFilePath, projectName, remoteUrl)
-}
 
 function createNewProject(templatePath, path, projectName) {
   createNewProjectFiles(projectName, templatePath, path, () => {
