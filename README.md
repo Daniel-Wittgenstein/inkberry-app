@@ -9,6 +9,12 @@ Inkberry is not a replacement for Inky, but rather a companion to it. In fact, y
 
 (Alternatively, instead of using Inky, you can also use VS code with the Ink integration or any other text editor, but Inky is the recommended choice for beginners.)
 
+**Newest Release:**
+
+[Download](https://github.com/Daniel-Wittgenstein/inkberry-app/releases/tag/0.0.12/)
+
+**Older Releases:**
+
 [Download](https://github.com/Daniel-Wittgenstein/inkberry-app/releases/tag/0.0.11/)
 
 
