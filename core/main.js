@@ -340,7 +340,7 @@ async function loadRemoteStoryTemplates() {
 
     console.log("Found remote template-package.json for ", remoteTemplDef.id)
 
-    addStoryTemplate(jsonDataPackage, "", "remote");
+    addStoryTemplate(jsonDataPackage, "", "remote", remoteTemplDef.zipUrl);
 
   }
 
@@ -604,7 +604,15 @@ function setupIpcCommunication() {
         return;
       }
       const templatePath = msg.selectedStoryTemplate.templatePath;
-      createNewProject(templatePath, msg.filePath, msg.projectName);
+
+      const createFromRemote = (msg.selectedStoryTemplate.templateType === "remote")
+
+      if (createFromRemote) {
+        createNewProjectFromRemote(msg.filePath, msg.projectName, 
+          msg.selectedStoryTemplate.remoteUrl);
+      } else {
+        createNewProject(templatePath, msg.filePath, msg.projectName);
+      }
     
     } else if (msg.signal === "requestUserSettings") {
       store.userSettings = userSettingsManager.loadSettings() || store.userSettings;
@@ -738,8 +746,8 @@ function loadStoryTemplates() {
 
 }
 
-function addStoryTemplate(package, templatePath, templateType) {
-  store.storyTemplates.push({ package, templatePath, templateType });
+function addStoryTemplate(package, templatePath, templateType, remoteUrl = "") {
+  store.storyTemplates.push({ package, templatePath, templateType, remoteUrl });
 }
 
 function createMainWindow() {
@@ -1117,6 +1125,11 @@ function onNewProjectSelectDir() {
     .then((filePaths) => {
       send({ signal: "newProjectSelectDir", filePaths });
     });
+}
+
+function createNewProjectFromRemote(targetFilePath, projectName, 
+  remoteUrl) {
+  console.log(`create new project from remote url: `, targetFilePath, projectName, remoteUrl)
 }
 
 function createNewProject(templatePath, path, projectName) {
