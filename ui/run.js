@@ -52,13 +52,6 @@ window.api.receive("fromMain", (data) => {
   } else if (data.signal === "onProjectFilesCreated") {
     showWaitingForProjectToOpenScreen();
 
-  } else if (data.signal === "newTemplateVersionFound") {
-    newTemplateVersionFound(data.template, data.latestVersion)
-
-  } else if (data.signal === "refreshTemplateViewAfterDownload") {
-    alert("Successfully updated template! Realoding app now.");
-    window.location.reload();
-
   } else {
     throw new Error("Invalid signal: " + data.signal);
   }

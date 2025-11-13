@@ -500,7 +500,6 @@ async function createNewProjectFromRemote(newProjectPath, projectName,
 
   console.log("project was successfully created from remote.")
 
-  // xyzzy
   
 
 }
