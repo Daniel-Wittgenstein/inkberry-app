@@ -8,6 +8,33 @@ const process = require('process');
 // ########### CONSTANTS ###########
 // #################################
 
+/*
+
+Templates come from three sources:
+
+  1. Already built-in.
+    Packaged with the app, least flexible.
+    Template can only change when the app gets a new version.
+
+  2. Is inside "Documents/inkberry-templates"
+    Most flexible, users can copy any templates to this folder. (And delete them.)
+    
+  3. From remote: only for remotes hard-coded into the app.
+    Medium flexible: remote urls are hard-coded, so they can only change when the app
+    gets a new version, but the template's developer can update the template
+    and users do not need to download a new version of the app.
+  
+*/
+
+const REMOTE_TEMPLATES = [
+  {
+    id: "inchiostro",
+    name: "Inchiostro",
+    metaUrl: "https://raw.githubusercontent.com/Daniel-Wittgenstein/inchiostro-dist/refs/heads/main/meta.json",
+    zipUrl: "https://raw.githubusercontent.com/Daniel-Wittgenstein/inchiostro-dist/refs/heads/main/inchiostro-latest.zip",
+  }
+]
+
 const USER_TEMPLATES_DIR = path.join(app.getPath("documents"), "inkberry-templates");
 
 const USER_SETTINGS_JSON = path.join(app.getPath("userData"), "settings.json");
